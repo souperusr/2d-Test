@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
             if (Enemy.MyTurn() == "Attack")
             {
                 Player.TakeDamage(AttackCalc(Enemy, Player));
-
+                
                 CurrentCombatant = NextCombatant();
 
 

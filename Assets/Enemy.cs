@@ -5,18 +5,22 @@ using UnityEngine;
 public class Enemy : Combatant
 {
     string EnemyMove;
+    float timeRemaining = 1;
 
     public string MyTurn()
     {
-        if (Input.GetKey(KeyCode.K))
+        
+        if (timeRemaining > 0f)
         {
-            EnemyMove = "Attack";
+            timeRemaining -= Time.deltaTime;
+            Debug.Log(timeRemaining);
+            return null;
         }
         else
         {
-            EnemyMove = null;
+            timeRemaining = 1;
+            return "Attack";
+            
         }
-        
-        return EnemyMove;
     }
 }

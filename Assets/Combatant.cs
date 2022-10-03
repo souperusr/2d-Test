@@ -17,4 +17,6 @@ public abstract class Combatant : MonoBehaviour
         HP -= damage;
         return HP;
     }
+
+    
 }
