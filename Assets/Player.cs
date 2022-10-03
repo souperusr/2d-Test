@@ -5,17 +5,6 @@ using UnityEngine;
 public class Player : Combatant
 {
     string PlayerMove;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public string MyTurn()
     {
@@ -24,8 +13,9 @@ public class Player : Combatant
             PlayerMove = "Attack";
             
         }
-        else {
-            PlayerMove = "None";
+        else 
+        {
+            PlayerMove = null;
         }
         return PlayerMove;
 
