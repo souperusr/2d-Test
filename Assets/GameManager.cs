@@ -3,18 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYTURN, WON, LOST }
+
 public class GameManager : MonoBehaviour
 {
+    public BattleState state;
+    
     public Player Player;
     public Enemy Enemy;
-    Combatant CurrentCombatant;
 
     public TMPro.TextMeshProUGUI EnemyHPGUI;
     public TMPro.TextMeshProUGUI PlayerHPGUI;
+    public TMPro.TextMeshProUGUI EventText;
+    public string CurrentText = "";
 
+    float t = 2;
+    
     void Start()
     {
-        CurrentCombatant = Player;
+        state = BattleState.PLAYERTHINKING;
+        
 
     }
 
@@ -23,27 +31,43 @@ public class GameManager : MonoBehaviour
     {
         PlayerHPGUI.text = Player.HP.ToString();
         EnemyHPGUI.text = Enemy.HP.ToString();
-        Debug.Log(CurrentCombatant);
+        EventText.text = CurrentText;
+        
+        
 
-        //print(Enemy.HP);
-        if (CurrentCombatant == Player)
-        { // If it is the player's turn
+        if (state == BattleState.PLAYERTHINKING)
+        {
             if (Player.MyTurn() == "Attack")
             {
+                CurrentText = ("You landed " + AttackCalc(Player, Enemy).ToString() + " damage on the enemy!");
+                
+                
                 Enemy.TakeDamage(AttackCalc(Player, Enemy));
-
-                CurrentCombatant = NextCombatant();
-
+                state = BattleState.PLAYERATTACKING;
+                t = 2;
 
             }
         }
-        else if (CurrentCombatant == Enemy)
+        
+        else if (state == BattleState.PLAYERATTACKING)
+        {
+            t -= Time.deltaTime;
+            if (t < 0)
+            {
+                state = BattleState.ENEMYTURN;
+            }
+        }
+
+        else if (state == BattleState.ENEMYTURN)
         { // If it is the enemy's turn
             if (Enemy.MyTurn() == "Attack")
             {
-                Player.TakeDamage(AttackCalc(Enemy, Player));
+                CurrentText = ("Enemy guy lands " + AttackCalc(Enemy, Player).ToString() + " damage on you!");
                 
-                CurrentCombatant = NextCombatant();
+
+                Player.TakeDamage(AttackCalc(Enemy, Player));
+
+                state = BattleState.PLAYERTHINKING;
 
 
             }
@@ -52,10 +76,10 @@ public class GameManager : MonoBehaviour
 
     }
 
-    Combatant NextCombatant()
-    {
-        return CurrentCombatant == Player ? Enemy : Player; // Returns Current Combatant as Player if Enemy and vise versa.
-    }
+    //Combatant NextCombatant()
+    //{
+    //    return CurrentCombatant == Player ? Enemy : Player; // Returns Current Combatant as Player if Enemy and vise versa.
+    //}
 
     int AttackCalc(Combatant Attacker, Combatant Attackee)
     {

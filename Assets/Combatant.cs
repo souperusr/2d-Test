@@ -4,8 +4,13 @@ using UnityEngine;
 
 public abstract class Combatant : MonoBehaviour
 {
+    public string Name;
+
     public int HP = 50;
     public int MP = 20;
+    
+    public int MaxHP = 50;
+    public int MaxMP = 20;
     public int Attack = 8;
     public int Strength = 6;
     public int Mobility = 4;

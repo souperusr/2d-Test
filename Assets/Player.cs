@@ -11,7 +11,7 @@ public class Player : Combatant
         // Finds what action the player does and sends it to GameManager
         if (Input.GetKey(KeyCode.J)) {
             PlayerMove = "Attack";
-            
+       
         }
         else 
         {
