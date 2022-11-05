@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public abstract class Combatant : MonoBehaviour
 {
     public string Name;
@@ -11,17 +12,22 @@ public abstract class Combatant : MonoBehaviour
     
     public int MaxHP = 50;
     public int MaxMP = 20;
-    public int Attack = 8;
-    public int Strength = 6;
+    public int Offense = 8;
+    public int Defense = 6;
     public int Mobility = 4;
     public int Magic = 6;
 
-    //string[] names = new string["10"]; Items
+    public Action[] Actions;
 
     public int TakeDamage(int damage) {
         HP -= damage;
         return HP;
     }
+    int AttackCalc(Combatant Attacker, Combatant Attackee)
+    {
+        return Attacker.Offense * 100 / (100 + Attackee.Defense);
+    }
 
-    
+
+
 }
