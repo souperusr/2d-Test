@@ -28,6 +28,27 @@ public abstract class Combatant : MonoBehaviour
         return Attacker.Offense * 100 / (100 + Attackee.Defense);
     }
 
+    void Update ()
+    {
+        if (HP > MaxHP)
+        {
+            HP = MaxHP;
+        }
+        else if (MP > MaxMP)
+        {
+            MP = MaxMP;
+        }
+        
+        else if (HP < 0)
+        {
+            HP = 0;
+        }
+
+        else if (MP < 0)
+        {
+            MP = 0;
+        }
+    }
 
 
 }

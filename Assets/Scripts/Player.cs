@@ -12,7 +12,7 @@ public class Player : Combatant
 
     void Start()
     {
-        Actions = new Action[] { new Attack("Whack", 0, 1f, false), new Attack("Flame", 5, 3f, true), new Heal("Lifeup", 3, true)};
+        Actions = new Action[] { new Attack("Whack", 0, 3, false), new Attack("Flame", 5, 1, true), new Heal("Lifeup", 50, 3, true)};
         
     }
     public Action MyTurn()

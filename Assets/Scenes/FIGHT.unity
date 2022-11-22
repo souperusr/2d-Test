@@ -352,10 +352,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 173325694}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d1f25fa35419bf4692d7e90f3960f32, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a65ff0f074a7e745be067464ad6dda1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: Mr. Enemy
+  Name: Mole Man
   HP: 50
   MP: 20
   MaxHP: 50
@@ -840,7 +840,7 @@ MonoBehaviour:
   Name: Player
   HP: 200
   MP: 20
-  MaxHP: 50
+  MaxHP: 200
   MaxMP: 20
   Offense: 8
   Defense: 6
@@ -948,7 +948,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 300}
+  m_AnchoredPosition: {x: 0, y: 250}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126494631

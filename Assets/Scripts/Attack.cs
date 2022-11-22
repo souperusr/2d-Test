@@ -9,11 +9,11 @@ public class Attack : Action
     public float PowerMult;
     
 
-    public Attack(string name, int mPCost, float powerMult, bool isMagic)
+    public Attack(string name, int mPCost, int attackPower, bool isMagic)
     {
         Name = name;
         MPCost = mPCost;
-        PowerMult = powerMult;
+        PowerMult = attackPower;
         IsMagic = isMagic;
 
         

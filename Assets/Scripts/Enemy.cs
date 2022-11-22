@@ -2,19 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Combatant
+public abstract class Enemy : Combatant
 {
     
     void Start()
     {
-        Actions = new Action[] { new Attack("Fire", 4, 1.5f, true), new Attack("Freeze", 18, 4f, true)};
+        Actions = new Action[] { new Attack("Attack", 0, 1, false),};
 }
+
+    public abstract Action MyTurn ();
     
-    public Action MyTurn()
-    {
-        return Actions[0];
-        
-    }
 
 
 

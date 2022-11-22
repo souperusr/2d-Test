@@ -3,14 +3,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYTURN, WON, LOST }
+public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYATTACKING, WON, LOST }
 
 public class GameManager : MonoBehaviour
 {
     public BattleState state;
 
     public Player Player;
-    public Enemy Enemy;
+    public Mole Enemy;
 
     public TMPro.TextMeshProUGUI EnemyHPGUI;
     public TMPro.TextMeshProUGUI PlayerHPGUI;
@@ -42,41 +42,71 @@ public class GameManager : MonoBehaviour
 
         }
 
+     
+
         if (state == BattleState.PLAYERTHINKING)
         {
             Action PlayerTurn = Player.MyTurn();
             if (PlayerTurn != null)
             {
-                int DamageHit = AttackCalc((Attack)PlayerTurn, Player, Enemy);
-                CurrentText = ("You landed " + DamageHit.ToString() + " damage on the enemy!");
+                if (PlayerTurn.GetType() == Type.GetType("Attack"))
+                {
+                    int DamageHit = AttackCalc((Attack)PlayerTurn, Player, Enemy);
+                    CurrentText = ("You landed " + DamageHit.ToString() + " damage on the enemy!");
 
-                Enemy.TakeDamage(DamageHit);
-                state = BattleState.PLAYERATTACKING;
-                StartCoroutine(PlayerAttack());
+                    Enemy.TakeDamage(DamageHit);
+                    state = BattleState.PLAYERATTACKING;
+                    StartCoroutine(PlayerAttack());
+                }
+                else if (PlayerTurn.GetType() == Type.GetType("Heal"))
+                {
+                    int HealHP = ((Heal)PlayerTurn).HealHP;
+                    Player.HP += HealHP;
+
+                    CurrentText = ("You recovered " + HealHP + " health!");
+                    state = BattleState.PLAYERATTACKING;
+                    StartCoroutine(PlayerAttack());
+                }
+                else
+                {
+                    throw new NotImplementedException();
+
+                }
             }
+            
         }
 
 
-        else if (state == BattleState.ENEMYTURN)
+        else if (state == BattleState.ENEMYATTACKING)
         { // If it is the enemy's turn
-            Attack EnemyTurn = (Attack)Enemy.MyTurn();
-            int DamageHit = AttackCalc(EnemyTurn, Enemy, Player);
-            CurrentText = (Enemy.Name + " landed " + DamageHit.ToString() + " damage on you!");
+            Action EnemyTurn = Enemy.MyTurn();
 
-            Player.TakeDamage(DamageHit);
+            if (EnemyTurn.GetType() == Type.GetType("Attack"))
+            {
+                int DamageHit = AttackCalc((Attack)EnemyTurn, Enemy, Player);
+                CurrentText = (Enemy.Name + " landed " + DamageHit.ToString() + " damage on you!");
+
+                Player.TakeDamage(DamageHit);
+                
+            }
+            else if (EnemyTurn.GetType() == Type.GetType("Heal"))
+            {
+                int HealHP = ((Heal)EnemyTurn).HealHP;
+                Enemy.HP += HealHP;
+
+                CurrentText = (Enemy.Name + " recovered " + HealHP + " HP");
+            }
             state = BattleState.PLAYERTHINKING;
 
-
-
-
         }
+
 
     }
 
     IEnumerator PlayerAttack()
     {
         yield return new WaitForSeconds(2f);
-        state = BattleState.ENEMYTURN;
+        state = BattleState.ENEMYATTACKING;
 
     }
 
