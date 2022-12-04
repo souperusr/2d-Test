@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Action
 {
     public string Name;
-    public bool IsMagic;
     public int MPCost;
 
     //public Action(string name, bool isMagic, int mPCost)

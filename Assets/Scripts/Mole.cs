@@ -7,18 +7,21 @@ public class Mole : Enemy
     // Start is called before the first frame update
     void Start()
     {
-        Actions = new Action[] { new Attack("Bite", 0, 1, false), new Heal("Burrow", 20, 0, false) };
+        Actions = new Action[] { new Attack("Bite", 0, 1), new Heal("Burrow", 20, 0)};
     }
 
     // Update is called once per frame
-    
-    public override Action MyTurn()
+
+    public override Action MyTurn ()
     {
-        if (HP < 10) {
+        if (lastTurn == null || lastTurn.Name == "Bite")
+        {
+            lastTurn = Actions[1];
             return Actions[1];
         }
         else
         {
+            lastTurn = Actions[0];
             return Actions[0];
         }
     }

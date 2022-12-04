@@ -3,18 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum AttackType { BASIC, FIRE, ELECTRICAL }
 public class Attack : Action
 {
-    
-    public float PowerMult;
-    
 
-    public Attack(string name, int mPCost, int attackPower, bool isMagic)
+    public int AttackDamage;
+    public AttackType ElemType;
+
+    public Attack(string name, int mPCost, int attackDamage, AttackType elemType = AttackType.BASIC)
     {
         Name = name;
         MPCost = mPCost;
-        PowerMult = attackPower;
-        IsMagic = isMagic;
+        AttackDamage = attackDamage;
+        ElemType = elemType;
+        
 
         
     }   

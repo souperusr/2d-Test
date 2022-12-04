@@ -3,6 +3,18 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
+/*
+TO DO:
+    - Elements
+    - UI
+    - Attack calc
+    
+    - MP checker
+
+*/
+
+
 public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYATTACKING, WON, LOST }
 
 public class GameManager : MonoBehaviour
@@ -13,7 +25,9 @@ public class GameManager : MonoBehaviour
     public Mole Enemy;
 
     public TMPro.TextMeshProUGUI EnemyHPGUI;
+    public TMPro.TextMeshProUGUI EnemyMPGUI;
     public TMPro.TextMeshProUGUI PlayerHPGUI;
+    public TMPro.TextMeshProUGUI PlayerMPGUI;
     public TMPro.TextMeshProUGUI EventText;
     public string CurrentText = "";
 
@@ -30,6 +44,8 @@ public class GameManager : MonoBehaviour
     {
         PlayerHPGUI.text = Player.HP.ToString();
         EnemyHPGUI.text = Enemy.HP.ToString();
+        PlayerMPGUI.text = Player.MP.ToString();
+        EnemyMPGUI.text = Enemy.MP.ToString();
         EventText.text = CurrentText;
 
         if (Player.HP < 0)
@@ -38,11 +54,7 @@ public class GameManager : MonoBehaviour
             CurrentText = "You lost...";
             SceneManager.LoadScene("SampleScene");
 
-
-
         }
-
-     
 
         if (state == BattleState.PLAYERTHINKING)
         {
@@ -51,19 +63,25 @@ public class GameManager : MonoBehaviour
             {
                 if (PlayerTurn.GetType() == Type.GetType("Attack"))
                 {
-                    int DamageHit = AttackCalc((Attack)PlayerTurn, Player, Enemy);
-                    CurrentText = ("You landed " + DamageHit.ToString() + " damage on the enemy!");
+                    int DamageHit = AttackCalc((Attack)PlayerTurn, Player, Enemy);                    
 
                     Enemy.TakeDamage(DamageHit);
+                    Player.MP -= PlayerTurn.MPCost;
+
+                    CurrentText = ("You landed " + DamageHit.ToString() + " damage on the enemy!");
+
                     state = BattleState.PLAYERATTACKING;
                     StartCoroutine(PlayerAttack());
                 }
                 else if (PlayerTurn.GetType() == Type.GetType("Heal"))
                 {
                     int HealHP = ((Heal)PlayerTurn).HealHP;
+                    
+                    Player.MP -= PlayerTurn.MPCost;
                     Player.HP += HealHP;
 
-                    CurrentText = ("You recovered " + HealHP + " health!");
+                    CurrentText = ("You recovered " + HealHP + " HP!");
+
                     state = BattleState.PLAYERATTACKING;
                     StartCoroutine(PlayerAttack());
                 }
@@ -87,12 +105,16 @@ public class GameManager : MonoBehaviour
                 CurrentText = (Enemy.Name + " landed " + DamageHit.ToString() + " damage on you!");
 
                 Player.TakeDamage(DamageHit);
-                
+                Enemy.MP -= EnemyTurn.MPCost;
+
+
             }
             else if (EnemyTurn.GetType() == Type.GetType("Heal"))
             {
                 int HealHP = ((Heal)EnemyTurn).HealHP;
+                
                 Enemy.HP += HealHP;
+                Enemy.MP -= EnemyTurn.MPCost;
 
                 CurrentText = (Enemy.Name + " recovered " + HealHP + " HP");
             }
@@ -120,7 +142,21 @@ public class GameManager : MonoBehaviour
 
     int AttackCalc(Attack attack, Combatant Attacker, Combatant Attackee)
     {
-        return (int)Math.Round(Attacker.Offense * attack.PowerMult * 100 / (100 + Attackee.Defense));
+        float typeRes;
+
+        if (attack.ElemType == AttackType.FIRE)
+        {
+            typeRes = Attackee.FireRes;
+        }
+        else if (attack.ElemType == AttackType.ELECTRICAL)
+        {
+            typeRes = Attackee.ElecRes;
+        }
+        else
+        {
+            typeRes = 1;
+        }
+        return (int)Math.Round(Attacker.Offense * attack.AttackDamage / typeRes * 100 / (100 + Attackee.Defense));
     }
 }
 

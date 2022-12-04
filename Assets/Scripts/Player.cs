@@ -4,35 +4,49 @@ using UnityEngine;
 
 public class Player : Combatant
 {
-    KeyCode BasicAttackKey = KeyCode.K;
-    KeyCode SpecialAttackKey = KeyCode.J;
-    KeyCode HealKey = KeyCode.L;
+    KeyCode BasicAttackKey = KeyCode.D;
+    KeyCode SpecialAttackKey = KeyCode.A;
+    KeyCode HealKey = KeyCode.W;
+    
     
 
 
     void Start()
     {
-        Actions = new Action[] { new Attack("Whack", 0, 3, false), new Attack("Flame", 5, 1, true), new Heal("Lifeup", 50, 3, true)};
+        Actions = new Action[] { new Attack("Whack", 0, 10), new Attack("Flame", 5, 15, AttackType.FIRE), new Heal("Lifeup", 50, 3)};
         
     }
     public Action MyTurn()
-    { 
+    {
+        Action Selection = null;
+        
         if (Input.GetKey(BasicAttackKey)) {
-            return Actions[0];
+            Selection = Actions[0];
        
         }
-        if (Input.GetKey(SpecialAttackKey))
+        else if (Input.GetKey(SpecialAttackKey))
         {
-            return Actions[1];
+            Selection = Actions[1];
 
         }
-        if (Input.GetKey(HealKey))
+        else if (Input.GetKey(HealKey))
         {
-            return Actions[2];
+            Selection = Actions[2];
 
+        }
+        if (Selection == null)
+        {
+            return null;
+        }
+        if (Selection.MPCost <= MP)
+        {
+            print("hi");
+            return Selection;
         }
         return null;
 
-        
+
+
+
     }
 }

@@ -6,11 +6,10 @@ public class Heal : Action
 {
     public int HealHP;
 
-    public Heal(string name, int healHP, int mPCost, bool isMagic)
+    public Heal(string name, int healHP, int mPCost)
     {
         Name = name;
         MPCost = mPCost;
-        IsMagic = isMagic;
         HealHP = healHP;
 
 

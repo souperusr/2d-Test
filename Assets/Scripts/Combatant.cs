@@ -14,8 +14,9 @@ public abstract class Combatant : MonoBehaviour
     public int MaxMP = 20;
     public int Offense = 8;
     public int Defense = 6;
+    public float FireRes = 1.2f;
+    public float ElecRes = .5f;
     public int Mobility = 4;
-    public int Magic = 6;
 
     public Action[] Actions;
 
