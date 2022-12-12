@@ -6,23 +6,23 @@ using UnityEngine.SceneManagement;
 
 /*
 TO DO:
-    - Elements
-    - UI
-    - Attack calc
-    
-    - MP checker
+    - Add another element(freeze? wind?)
+    - Enemy actions
+    - More player actions
+    - Multiple enemies
+
 
 */
 
 
-public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYATTACKING, WON, LOST }
+public enum BattleState { START, PLAYERTHINKING, PLAYERATTACKING, ENEMYTHINKING, ENEMYATTACKING, WON, LOST }
 
 public class GameManager : MonoBehaviour
 {
     public BattleState state;
 
     public Player Player;
-    public Mole Enemy;
+    public Enemy Enemy;
 
     public TMPro.TextMeshProUGUI EnemyHPGUI;
     public TMPro.TextMeshProUGUI EnemyMPGUI;
@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     public TMPro.TextMeshProUGUI EventText;
     public string CurrentText = "";
 
+    int Damage;
 
     void Start()
     {
@@ -64,11 +65,11 @@ public class GameManager : MonoBehaviour
                 if (PlayerTurn.GetType() == Type.GetType("Attack"))
                 {
                     int DamageHit = AttackCalc((Attack)PlayerTurn, Player, Enemy);                    
-
+                    Damage = DamageHit;
                     Enemy.TakeDamage(DamageHit);
                     Player.MP -= PlayerTurn.MPCost;
 
-                    CurrentText = ("You landed " + DamageHit.ToString() + " damage on the enemy!");
+                    CurrentText = ("You " + PlayerTurn.ActionText + Enemy.Name) ;
 
                     state = BattleState.PLAYERATTACKING;
                     StartCoroutine(PlayerAttack());
@@ -76,11 +77,12 @@ public class GameManager : MonoBehaviour
                 else if (PlayerTurn.GetType() == Type.GetType("Heal"))
                 {
                     int HealHP = ((Heal)PlayerTurn).HealHP;
-                    
+                    Damage = -HealHP;    
+
                     Player.MP -= PlayerTurn.MPCost;
                     Player.HP += HealHP;
 
-                    CurrentText = ("You recovered " + HealHP + " HP!");
+                    CurrentText = ("You " + PlayerTurn.ActionText);
 
                     state = BattleState.PLAYERATTACKING;
                     StartCoroutine(PlayerAttack());
@@ -95,30 +97,36 @@ public class GameManager : MonoBehaviour
         }
 
 
-        else if (state == BattleState.ENEMYATTACKING)
+        else if (state == BattleState.ENEMYTHINKING)
         { // If it is the enemy's turn
             Action EnemyTurn = Enemy.MyTurn();
 
             if (EnemyTurn.GetType() == Type.GetType("Attack"))
             {
                 int DamageHit = AttackCalc((Attack)EnemyTurn, Enemy, Player);
-                CurrentText = (Enemy.Name + " landed " + DamageHit.ToString() + " damage on you!");
+                Damage = DamageHit;
+
+                CurrentText = (Enemy.Name + " " + EnemyTurn.ActionText);
 
                 Player.TakeDamage(DamageHit);
                 Enemy.MP -= EnemyTurn.MPCost;
+                state = BattleState.ENEMYATTACKING;
+                StartCoroutine(EnemyAttack());
 
 
             }
             else if (EnemyTurn.GetType() == Type.GetType("Heal"))
             {
                 int HealHP = ((Heal)EnemyTurn).HealHP;
+                Damage = -HealHP; 
                 
                 Enemy.HP += HealHP;
                 Enemy.MP -= EnemyTurn.MPCost;
 
-                CurrentText = (Enemy.Name + " recovered " + HealHP + " HP");
+                CurrentText = (Enemy.Name + " " + EnemyTurn.ActionText);
+                state = BattleState.ENEMYATTACKING;
+                StartCoroutine(EnemyAttack());
             }
-            state = BattleState.PLAYERTHINKING;
 
         }
 
@@ -127,23 +135,51 @@ public class GameManager : MonoBehaviour
 
     IEnumerator PlayerAttack()
     {
-        yield return new WaitForSeconds(2f);
-        state = BattleState.ENEMYATTACKING;
+        yield return new WaitForSeconds(1.5f);
+        if (Damage >= 0)
+        {
+            CurrentText = (Enemy.Name + " took " + Damage + " damage");
+        }
+        else
+        {
+            CurrentText = ("You recovered " + -Damage + " HP");
+        }
+        yield return new WaitForSeconds(1.5f);
+               
+        state = BattleState.ENEMYTHINKING;
 
+    }
+
+    IEnumerator EnemyAttack()
+    {
+        
+        yield return new WaitForSeconds(1.5f);
+        if (Damage >= 0)
+        {
+            CurrentText = ("You took " + Damage + " damage");
+        }
+        else
+        {
+            CurrentText = (Enemy.Name + " recovered " + -Damage + " HP");
+        }
+        yield return new WaitForSeconds(1.5f);
+
+        state = BattleState.PLAYERTHINKING;
     }
 
 
 
 
-    //Combatant NextCombatant()
-    //{
-    //    return CurrentCombatant == Player ? Enemy : Player; // Returns Current Combatant as Player if Enemy and vise versa.
-    //}
-
     int AttackCalc(Attack attack, Combatant Attacker, Combatant Attackee)
     {
-        float typeRes;
+        int baseDamage = attack.AttackDamage;
+        float offense = Attacker.Offense;
+        float defense = Attackee.Defense;
 
+
+        int elemDamage = attack.ElemDamage;
+        float typeRes; 
+        
         if (attack.ElemType == AttackType.FIRE)
         {
             typeRes = Attackee.FireRes;
@@ -156,7 +192,8 @@ public class GameManager : MonoBehaviour
         {
             typeRes = 1;
         }
-        return (int)Math.Round(Attacker.Offense * attack.AttackDamage / typeRes * 100 / (100 + Attackee.Defense));
+
+        return (int)Math.Round((baseDamage * (offense / defense)) + (elemDamage / typeRes));
     }
 }
 

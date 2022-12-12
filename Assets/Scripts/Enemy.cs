@@ -8,7 +8,7 @@ public abstract class Enemy : Combatant
 
     void Start()
     {
-        Actions = new Action[] { new Attack("Attack", 0, 1)};
+        Actions = new Action[] { new Attack("Attack", "attacked", 0, 5)};
 }
 
     public abstract Action MyTurn ();

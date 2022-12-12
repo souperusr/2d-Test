@@ -6,13 +6,6 @@ public abstract class Action
 {
     public string Name;
     public int MPCost;
+    public string ActionText;
 
-    //public Action(string name, bool isMagic, int mPCost)
-    //{
-    //    Name = name;
-    //    IsMagic = isMagic;
-    //    MPCost = mPCost;
-
-
-    //}
 }
