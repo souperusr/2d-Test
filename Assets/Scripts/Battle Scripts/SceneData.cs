@@ -4,9 +4,13 @@ using UnityEngine;
 
 public static class SceneData
 {
-    
+    public static bool[] Enemies = {};
+    public static int EnemyIndex;
+
     public static string EnemyName = "Ant";
-    
+
+    public static Vector2 Position = new Vector2(21, -16);
+
     public static int HP = 50;
     public static int MP = 20;
 

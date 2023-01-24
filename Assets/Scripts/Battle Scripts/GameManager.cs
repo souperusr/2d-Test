@@ -140,6 +140,8 @@ public class GameManager : MonoBehaviour
         CurrentText = "You won!!";
         yield return new WaitForSeconds(5f);
 
+        SceneData.Enemies[SceneData.EnemyIndex] = false;
+        
         SceneData.HP = Player.HP;
         SceneData.MP = Player.MP;
 
